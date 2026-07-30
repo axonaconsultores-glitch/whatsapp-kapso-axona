@@ -35,6 +35,7 @@ jobs:
       - name: Ejecutar la accion elegida
         env:
           KAPSO_API_KEY: ${{ secrets.KAPSO_API_KEY }}
+          KAPSO_BUSINESS_ACCOUNT_ID: ${{ secrets.KAPSO_BUSINESS_ACCOUNT_ID }}
           KAPSO_PHONE_NUMBER_ID: ${{ secrets.KAPSO_PHONE_NUMBER_ID }}
           NUMERO_DE_PRUEBA: ${{ secrets.NUMERO_DE_PRUEBA }}
           NOMBRE_PLANTILLA: invitacion_foro_seguridad
