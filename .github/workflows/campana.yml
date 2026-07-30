@@ -1,0 +1,57 @@
+name: Campana WhatsApp AXONA
+
+# Se ejecuta manualmente desde la pestana "Actions" del repositorio,
+# haciendo clic en "Run workflow" y eligiendo que accion realizar.
+on:
+  workflow_dispatch:
+    inputs:
+      accion:
+        description: "Que quieres hacer?"
+        required: true
+        type: choice
+        default: "simular"
+        options:
+          - crear-plantilla
+          - ver-plantilla
+          - prueba
+          - simular
+          - enviar
+
+jobs:
+  ejecutar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el codigo del repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar la accion elegida
+        env:
+          KAPSO_API_KEY: ${{ secrets.KAPSO_API_KEY }}
+          KAPSO_PHONE_NUMBER_ID: ${{ secrets.KAPSO_PHONE_NUMBER_ID }}
+          NUMERO_DE_PRUEBA: ${{ secrets.NUMERO_DE_PRUEBA }}
+          NOMBRE_PLANTILLA: invitacion_foro_seguridad
+          IDIOMA_PLANTILLA: es
+        run: |
+          case "${{ inputs.accion }}" in
+            crear-plantilla) npm run crear-plantilla ;;
+            ver-plantilla)   npm run ver-plantilla ;;
+            prueba)          npm run prueba ;;
+            simular)         npm run campana:simular ;;
+            enviar)          npm run campana:enviar ;;
+          esac
+
+      - name: Guardar el registro de envios (si se genero)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultado-envio
+          path: logs/resultado_envio.csv
+          if-no-files-found: ignore
