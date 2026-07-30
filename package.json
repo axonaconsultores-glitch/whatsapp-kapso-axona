@@ -1,0 +1,19 @@
+{
+    "name": "whatsapp-kapso-axona",
+    "version": "1.0.0",
+    "description": "Campana de invitacion por WhatsApp para el Foro de Seguridad de la Informacion - AXONA (via Kapso)",
+    "main": "src/enviarCampana.js",
+    "type": "commonjs",
+    "scripts": {
+          "crear-plantilla": "node src/crearPlantilla.js",
+          "ver-plantilla": "node src/verEstadoPlantilla.js",
+          "prueba": "node src/enviarPrueba.js",
+          "campana:simular": "node src/enviarCampana.js --dry-run",
+          "campana:enviar": "node src/enviarCampana.js"
+    },
+    "dependencies": {
+          "axios": "^1.7.9",
+          "csv-parse": "^5.5.6",
+          "dotenv": "^16.4.7"
+    }
+}
