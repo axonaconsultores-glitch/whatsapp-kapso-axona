@@ -19,22 +19,33 @@ const RUTA_LOG = path.join(__dirname, "..", "logs", "resultado_envio.csv");
 const ESPERA_ENTRE_MENSAJES_MS = 1200;
 const esSimulacion = process.argv.includes("--dry-run");
 
-// Horario laboral valido para Colombia: 9:00am a 4:00pm (16:00)
-const HORA_INICIO_VALIDA = 9;
-const HORA_FIN_VALIDA = 16;
+// Ventana de envio valida: lunes 3 de agosto de 2026, 9:30am a 10:00am hora Colombia
+const FECHA_ENVIO_VALIDA = "2026-08-03";
+const HORA_INICIO_VALIDA = "09:30";
+const HORA_FIN_VALIDA = "10:00";
 
-function horaActualColombia() {
-  const formateador = new Intl.DateTimeFormat("en-US", {
+function fechaHoraActualColombia() {
+  const formateador = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Bogota",
-    hour: "numeric",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: false,
   });
-  return parseInt(formateador.format(new Date()), 10);
+  const partes = formateador.formatToParts(new Date());
+  const obj = {};
+  partes.forEach((p) => (obj[p.type] = p.value));
+  return {
+    fecha: `${obj.year}-${obj.month}-${obj.day}`,
+    hora: `${obj.hour}:${obj.minute}`,
+  };
 }
 
 function estaEnHorarioValido() {
-  const hora = horaActualColombia();
-  return hora >= HORA_INICIO_VALIDA && hora < HORA_FIN_VALIDA;
+  const { fecha, hora } = fechaHoraActualColombia();
+  return fecha === FECHA_ENVIO_VALIDA && hora >= HORA_INICIO_VALIDA && hora < HORA_FIN_VALIDA;
 }
 
 function cargarContactos() {
@@ -85,15 +96,16 @@ async function ejecutarCampana() {
     console.log("MODO SIMULACION: no se enviara ningun mensaje real.");
   } else {
     if (!estaEnHorarioValido()) {
+      const actual = fechaHoraActualColombia();
       console.log(
-        `Fuera de horario laboral. Los envios reales solo se permiten entre las ` +
-        `${HORA_INICIO_VALIDA}:00am y las ${HORA_FIN_VALIDA - 12}:00pm, hora Colombia. ` +
-        `Hora actual en Colombia: ${horaActualColombia()}:00. ` +
-        `Vuelve a ejecutar esta accion dentro de ese horario. No se envio ningun mensaje.`
+        `Fuera de la ventana de envio. Los envios reales solo se permiten el ${FECHA_ENVIO_VALIDA} ` +
+        `entre las ${HORA_INICIO_VALIDA} y las ${HORA_FIN_VALIDA}, hora Colombia. ` +
+        `Fecha y hora actual en Colombia: ${actual.fecha} ${actual.hora}. ` +
+        `No se envio ningun mensaje.`
       );
       process.exit(1);
     }
-    console.log("MODO ENVIO REAL: se enviaran mensajes de verdad.");
+    console.log(`MODO ENVIO REAL: se enviaran mensajes de verdad (ventana ${FECHA_ENVIO_VALIDA} ${HORA_INICIO_VALIDA}-${HORA_FIN_VALIDA}).`);
   }
 
   let exitosos = 0;
@@ -118,8 +130,8 @@ async function ejecutarCampana() {
 
     if (!estaEnHorarioValido()) {
       console.log(
-        `Se alcanzo el limite del horario laboral (${HORA_FIN_VALIDA - 12}:00pm, hora Colombia). ` +
-        `Se detiene el envio aqui; el resto queda pendiente para el siguiente horario valido.`
+        `Se alcanzo el limite de la ventana de envio (${HORA_FIN_VALIDA}, hora Colombia). ` +
+        `Se detiene el envio aqui; el resto queda pendiente para la siguiente ventana valida.`
       );
       break;
     }
