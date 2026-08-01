@@ -19,8 +19,8 @@ const RUTA_LOG = path.join(__dirname, "..", "logs", "resultado_envio.csv");
 const ESPERA_ENTRE_MENSAJES_MS = 1200;
 const esSimulacion = process.argv.includes("--dry-run");
 
-// Horario laboral valido para Colombia: 10:00am a 4:00pm (16:00)
-const HORA_INICIO_VALIDA = 10;
+// Horario laboral valido para Colombia: 9:00am a 4:00pm (16:00)
+const HORA_INICIO_VALIDA = 9;
 const HORA_FIN_VALIDA = 16;
 
 function horaActualColombia() {
