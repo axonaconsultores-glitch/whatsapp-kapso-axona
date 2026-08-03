@@ -69,6 +69,8 @@ function cargarYaEnviados() {
 }
 
 function registrarResultado(fila) {
+  const carpetaLog = path.dirname(RUTA_LOG);
+  if (!fs.existsSync(carpetaLog)) fs.mkdirSync(carpetaLog, { recursive: true });
   const encabezado = "numero,nombre,estado,detalle,fecha\n";
   const existe = fs.existsSync(RUTA_LOG);
   if (!existe) fs.writeFileSync(RUTA_LOG, encabezado);
