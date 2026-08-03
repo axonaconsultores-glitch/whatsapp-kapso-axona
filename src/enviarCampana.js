@@ -19,10 +19,10 @@ const RUTA_LOG = path.join(__dirname, "..", "logs", "resultado_envio.csv");
 const ESPERA_ENTRE_MENSAJES_MS = 1200;
 const esSimulacion = process.argv.includes("--dry-run");
 
-// Ventana de envio valida: lunes 3 de agosto de 2026, 9:30am a 10:00am hora Colombia
+// Ventana de envio valida: lunes 3 de agosto de 2026, 9:30am a 11:50am hora Colombia
 const FECHA_ENVIO_VALIDA = "2026-08-03";
 const HORA_INICIO_VALIDA = "09:30";
-const HORA_FIN_VALIDA = "10:00";
+const HORA_FIN_VALIDA = "11:50";
 
 function fechaHoraActualColombia() {
   const formateador = new Intl.DateTimeFormat("en-CA", {
